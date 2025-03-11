@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "574042391138",
+    "project_id": "cdkauth-489db",
+    "storage_bucket": "cdkauth-489db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574042391138:android:0a5f185cbb8ac9202ac73b",
+        "android_client_info": {
+          "package_name": "com.ap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeXGIeID64Ju3LdcOqGXN1sRkrlfjKpoA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
