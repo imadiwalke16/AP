@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../redux/slices/authSlice";
+import { login, fetchUserDetails } from "../../redux/slices/authSlice";
 import { RootState, AppDispatch } from "../../redux/store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../navigation/AuthNavigator";
@@ -19,10 +19,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       Alert.alert("Error", "Email and password are required!");
       return;
     }
-  
+
     try {
       const resultAction = await dispatch(login({ email, password })).unwrap();
       if (resultAction.token) {
+        // Fetch user details after successful login
+        await dispatch(fetchUserDetails()).unwrap();
         navigation.reset({
           index: 0,
           routes: [{ name: "Home" as never }],
@@ -32,8 +34,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       Alert.alert("Login Failed", err?.toString() || "Something went wrong");
     }
   };
-  
-    
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
