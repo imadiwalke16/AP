@@ -1,19 +1,22 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RouteProp } from "@react-navigation/native";
 
-export type RootStackParamList = {
+// Auth Screens (before login)
+export type AuthStackParamList = {
   Login: undefined;
-  OTP: undefined;
-  Register: undefined;
+  OTPScreen: undefined;
+  RegisterScreen: undefined;
+};
+
+// Main Screens (after login)
+export type MainStackParamList = {
   Home: undefined;
-  ServiceHistory: undefined;
-  Notifications: undefined;
   Profile: undefined;
+  Notifications: undefined;
+  ServiceHistory: undefined;
   BookAppointment: undefined;
 };
 
-// Define reusable props for screens
-export type ScreenProps<T extends keyof RootStackParamList> = {
-  navigation: NativeStackNavigationProp<RootStackParamList, T>;
-  route: RouteProp<RootStackParamList, T>;
+// Generic type for screen props
+export type ScreenProps<T extends keyof AuthStackParamList | keyof MainStackParamList> = {
+  navigation: NativeStackNavigationProp<AuthStackParamList & MainStackParamList, T>;
 };

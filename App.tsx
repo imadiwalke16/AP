@@ -1,12 +1,24 @@
 import React from "react";
+import { Provider } from "react-redux";
+import { store } from "./src/redux/store";
 import { NavigationContainer } from "@react-navigation/native";
-import AppNavigator from "./src/navigation/AppNavigator";
+import { useSelector } from "react-redux";
+import { RootState } from "./src/redux/store";
+import AuthNavigator from "./src/navigation/AuthNavigator";
+import MainNavigator from "./src/navigation/MainNavigator";
+
+const AppContent = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
+  return token ? <MainNavigator /> : <AuthNavigator />;
+};
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <AppContent />
+      </NavigationContainer>
+    </Provider>
   );
 };
 

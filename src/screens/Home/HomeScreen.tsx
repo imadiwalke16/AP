@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
-import { ScreenProps } from "../../navigation/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MainStackParamList } from "../../navigation/MainNavigator";
 
-const HomeScreen: React.FC<ScreenProps<"Home">> = ({ navigation }) => {
+type Props = NativeStackScreenProps<MainStackParamList, "Home">;
+
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View>
       <Text>Home Screen</Text>
