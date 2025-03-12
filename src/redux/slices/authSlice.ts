@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 interface AuthState {
   user: null | { id: number; email: string; role: string };
   token: string | null;
+  otpVerified: boolean;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
@@ -12,6 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   token: null,
+  otpVerified: false, // 🔹 New field to track OTP verification
   status: "idle",
   error: null,
 };
@@ -55,6 +57,15 @@ export const fetchUserDetails = createAsyncThunk(
   }
 );
 
+// 🔹 OTP Verification Action
+export const verifyOTP = createAsyncThunk("auth/verifyOTP", async (_, { rejectWithValue }) => {
+  try {
+    return true; // Simulating OTP verification success
+  } catch (error) {
+    return rejectWithValue("OTP verification failed");
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -62,6 +73,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.otpVerified = false; // Reset OTP status on logout
       AsyncStorage.removeItem("token");
     },
   },
@@ -74,6 +86,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.token = action.payload.token;
+        state.otpVerified = false; // Ensure OTP must be verified
       })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
@@ -89,6 +102,9 @@ const authSlice = createSlice({
       .addCase(fetchUserDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(verifyOTP.fulfilled, (state) => {
+        state.otpVerified = true;
       });
   },
 });
