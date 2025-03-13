@@ -10,9 +10,10 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       {user ? (
         <>
-          <Text style={styles.text}>User ID: {user.id}</Text>
+          <Text style={styles.text}>Name: {user.name || "N/A"}</Text>
           <Text style={styles.text}>Email: {user.email}</Text>
-          <Text style={styles.text}>Role: {user.role}</Text>
+          <Text style={styles.text}>Phone: {user.phoneNumber || "N/A"}</Text>
+          {/* <Text style={styles.text}>Role: {user.role}</Text> */}
         </>
       ) : (
         <Text style={styles.text}>No user logged in</Text>

@@ -3,7 +3,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthState {
-  user: null | { id: number; email: string; role: string };
+  user: null | { id: number; email: string; role: string; name: string; phoneNumber: string };
   token: string | null;
   otpVerified: boolean;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -13,7 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   token: null,
-  otpVerified: false, // 🔹 New field to track OTP verification
+  otpVerified: false,
   status: "idle",
   error: null,
 };
@@ -50,17 +50,17 @@ export const fetchUserDetails = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data; // Expecting { id, email, role }
+      return response.data; // Expecting { id, email, role, name, phoneNumber }
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch user details");
     }
   }
 );
 
-// 🔹 OTP Verification Action
+// OTP Verification Action
 export const verifyOTP = createAsyncThunk("auth/verifyOTP", async (_, { rejectWithValue }) => {
   try {
-    return true; // Simulating OTP verification success
+    return true;
   } catch (error) {
     return rejectWithValue("OTP verification failed");
   }
@@ -73,7 +73,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      state.otpVerified = false; // Reset OTP status on logout
+      state.otpVerified = false;
       AsyncStorage.removeItem("token");
     },
   },
@@ -86,7 +86,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.token = action.payload.token;
-        state.otpVerified = false; // Ensure OTP must be verified
+        state.otpVerified = false;
       })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
