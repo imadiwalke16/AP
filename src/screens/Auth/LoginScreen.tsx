@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("/Users/aditya/Projects/AP/asset/image.png")} style={styles.logo} />
+      <Image source={require("/Users/aditya/CDKScreen/AP/asset/image.png")} style={styles.logo} />
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.subtitle}>Dealership</Text>
       <Text style={styles.dealership}>Autonation Inc.</Text>
