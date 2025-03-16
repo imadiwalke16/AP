@@ -71,3 +71,12 @@ export const deleteVehicle = async (vehicleId: number) => {
     throw new Error(error.response?.data?.message || "Failed to delete vehicle.");
   }
 };
+export const bookAppointment = async (appointmentData: any) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/service-appointments`, appointmentData);
+    return response.data;
+  } catch (error) {
+    console.error('Error posting service appointment:', error);
+    throw error;
+  }
+};

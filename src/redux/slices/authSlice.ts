@@ -21,12 +21,15 @@ const initialState: AuthState = {
 // Login API call
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+  async ({ email, password }: { email: string; password: string }, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post("http://10.0.2.2:5245/api/auth/login", { email, password });
 
       // Store token
       await AsyncStorage.setItem("token", response.data.token);
+
+      // Fetch user details after login
+      dispatch(fetchUserDetails());
 
       return { token: response.data.token };
     } catch (error: any) {
@@ -97,7 +100,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload;
+        state.user = action.payload; // ✅ Store user details in state
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
         state.status = "failed";

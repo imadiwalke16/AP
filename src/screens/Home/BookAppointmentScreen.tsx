@@ -9,7 +9,8 @@ import { getVehicles } from "../../redux/slices/vehicleSlice";
 import { selectTransportMode } from "../../redux/slices/transportSlice";
 import { RootState } from "../../redux/store";
 import { Picker } from "@react-native-picker/picker";
-
+import { bookAppointment } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts";
+import {} from '/Users/aditya/CDKScreen/AP/src/redux/slices/authSlice.ts'
 const transportModes = [
   { name: "Self-Drive", cost: 0 },
   { name: "Pickup", cost: 200 },
@@ -22,6 +23,7 @@ const BookAppointmentScreen: React.FC = () => {
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState<number | null>(null);
   const [selectedTransport, setSelectedTransport] = useState<string | null>(null);
+const user = useSelector((state: RootState) => state.auth.user);
 
   const dispatch = useDispatch();
   const { centers } = useSelector((state: RootState) => state.serviceCenters);
@@ -75,6 +77,35 @@ const BookAppointmentScreen: React.FC = () => {
 
     return serviceCost + transportCost;
   }, [selectedServices, selectedTransport, services]);
+
+  const handleConfirmBooking = async () => {
+    try {
+      const appointmentData = {
+        appointmentDate: new Date().toISOString(),  // Use current date/time or selected date
+        userId: user?.id,  // Ensure this comes from Redux or Context
+        vehicleId: selectedVehicle,  
+        serviceCenterId: selectedCenter,
+        transportMode: selectedTransport,  
+        transportCharge: totalCost,  
+        serviceOfferedIds: selectedServices,  
+      };
+  
+      await bookAppointment(appointmentData);  // Call API function
+  
+      Alert.alert("Success", "Booked Successfully", [
+        { text: "OK", onPress: resetBookingFlow }, // Reset after success
+      ]); // Show alert on success
+    } catch (error) {
+      Alert.alert("Error", "Booking failed. Please try again.");  // Handle errors
+    }
+  };
+  const resetBookingFlow = () => {
+    setPinCode("");
+    setSelectedCenter(null);
+    setSelectedServices([]);
+    setSelectedVehicle(null);
+    setSelectedTransport(null);
+  };
 
   return (
     <View style={styles.container}>
@@ -183,8 +214,8 @@ const BookAppointmentScreen: React.FC = () => {
       {selectedTransport && (
         <>
           <Text style={styles.finalText}>Total Cost: ₹{totalCost}</Text>
-          <Button title="Confirm Booking" onPress={() => Alert.alert("Booking Confirmed", `Total Cost: ₹${totalCost}`)} />
-        </>
+          <Button title="Confirm Booking" onPress={handleConfirmBooking} />
+          </>
       )}
     </View>
   );

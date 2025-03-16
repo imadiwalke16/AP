@@ -13,6 +13,7 @@ export const store = configureStore({
     vehicles: vehicleReducer,
     transport: transportReducer, // ✅ Added transport slice
 
+
   },
 });
 
