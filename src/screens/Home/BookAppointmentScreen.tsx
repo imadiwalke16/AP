@@ -211,12 +211,36 @@ const user = useSelector((state: RootState) => state.auth.user);
         </>
       )}
 
-      {selectedTransport && (
-        <>
-          <Text style={styles.finalText}>Total Cost: ₹{totalCost}</Text>
-          <Button title="Confirm Booking" onPress={handleConfirmBooking} />
-          </>
-      )}
+{selectedTransport && (
+  <>
+    {/* Order Summary */}
+    <View style={styles.summaryContainer}>
+      <Text style={styles.summaryTitle}>Order Summary</Text>
+      
+      <Text style={styles.summaryItem}>🛠️ Service Center: {centers.find(c => c.id === selectedCenter)?.name}</Text>
+      
+      <Text style={styles.summaryItem}>📌 Services Selected:</Text>
+      {selectedServices.map(serviceId => {
+        const service = services.find(s => s.id === serviceId);
+        return (
+          <Text key={serviceId} style={styles.summarySubItem}>
+            - {service?.name} (₹{service?.price})
+          </Text>
+        );
+      })}
+      
+      <Text style={styles.summaryItem}>🚗 Vehicle: {vehicles.find(v => v.id === selectedVehicle)?.make} {vehicles.find(v => v.id === selectedVehicle)?.model}</Text>
+      
+      <Text style={styles.summaryItem}>🚚 Transport Mode: {selectedTransport}</Text>
+
+      <Text style={styles.summaryTotal}>💰 Total Cost: ₹{totalCost}</Text>
+    </View>
+
+    {/* Confirm Booking Button */}
+    <Button title="Confirm Booking" onPress={handleConfirmBooking} />
+  </>
+)}
+
     </View>
   );
 };
@@ -236,6 +260,32 @@ const styles = StyleSheet.create({
   transportCard: { padding: 10, marginVertical: 5, backgroundColor: "#e9e9e9", borderRadius: 5 },
   transportName: { fontSize: 16, fontWeight: "bold" },
   finalText: { fontSize: 18, fontWeight: "bold", color: "green", marginTop: 20 },
+  summaryContainer: { 
+    backgroundColor: "#f4f4f4", 
+    padding: 15, 
+    borderRadius: 8, 
+    marginVertical: 15 
+  },
+  summaryTitle: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    marginBottom: 5 
+  },
+  summaryItem: { 
+    fontSize: 16, 
+    marginVertical: 3 
+  },
+  summarySubItem: { 
+    fontSize: 14, 
+    marginLeft: 10 
+  },
+  summaryTotal: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    color: "green", 
+    marginTop: 10 
+  },
+  
 });
 
 export default BookAppointmentScreen;
