@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { 
-  View, Text, TextInput, Button, FlatList, StyleSheet, Alert, TouchableOpacity 
+  View, Text, TextInput, Button, FlatList, StyleSheet, Alert, TouchableOpacity, Image
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchServiceCenters } from "../../redux/slices/serviceCenterSlice";
@@ -128,20 +128,31 @@ const user = useSelector((state: RootState) => state.auth.user);
 
       {!selectedCenter && (
         <FlatList
-          data={centers}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity 
-              style={[styles.card, selectedCenter === item.id && styles.selectedCard]} 
-              onPress={() => handleSelectServiceCenter(item.id)}
-            >
-              <Text style={styles.name}>{item.name}</Text>
-              <Text>{item.address}</Text>
-              <Text>{item.phoneNumber}</Text>
-              <Text>Brands: {item.brandsSupported.join(", ")}</Text>
-            </TouchableOpacity>
-          )}
-        />
+        data={centers}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity 
+            style={[styles.card, selectedCenter === item.id && styles.selectedCard]} 
+            onPress={() => handleSelectServiceCenter(item.id)}
+          >
+            {/* Upper Half - Service Center Details */}
+            <View style={styles.upperHalf}>
+              <Image source={{ uri: "https://imgs.search.brave.com/Qpc6eLMV98mnRD_0EvtDo4daMQ-PuZesKBOflmq28Vs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9mL2Y0L0JN/V19sb2dvXyUyOGdy/YXklMjkuc3ZnLzIy/MHB4LUJNV19sb2dv/XyUyOGdyYXklMjku/c3ZnLnBuZw"}} style={styles.logo} />
+              <View style={styles.details}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text>{item.address}</Text>
+                <Text>{item.phoneNumber}</Text>
+                <Text>Brands: {item.brandsSupported.join(", ")}</Text>
+              </View>
+            </View>
+      
+            {/* Lower Half - Service Center Image */}
+            <Image source={{uri:"https://imgs.search.brave.com/OutYZ504q182I7Tv6graXb0XqaYd55xBu_hU-Iiab7o/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9waWN0/dXJlcy5kZWFsZXIu/Y29tL2IvYm13b2Zk/YWxsYXMvMTU4OS9h/NTAyY2ZiMDNmMjhi/ZWU4ZjEwNjIyYmIx/ZWI0OGFiMXguanBn" }} style={styles.serviceCenterImage} />
+          </TouchableOpacity>
+        )}
+      />
+      
+      
       )}
 
       {selectedCenter && !selectedVehicle && (
@@ -250,9 +261,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
   label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
   input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
-  card: { padding: 15, marginVertical: 10, backgroundColor: "#f9f9f9", borderRadius: 5 },
-  selectedCard: { backgroundColor: "#cde6ff" },
-  name: { fontSize: 18, fontWeight: "bold" },
+  // card: { padding: 15, marginVertical: 10, backgroundColor: "#f9f9f9", borderRadius: 5 },
+  // selectedCard: { backgroundColor: "#cde6ff" },
+  // name: { fontSize: 18, fontWeight: "bold" },
   subTitle: { fontSize: 20, fontWeight: "bold", marginTop: 15 },
   serviceCard: { padding: 10, marginVertical: 5, backgroundColor: "#e9e9e9", borderRadius: 5 },
   selectedServiceCard: { backgroundColor: "#cde6ff" },
@@ -285,6 +296,117 @@ const styles = StyleSheet.create({
     color: "green", 
     marginTop: 10 
   },
+  // card: {
+  //   flexDirection: "row",  
+  //   alignItems: "center",
+  //   justifyContent: "space-between",
+  //   backgroundColor: "#f9f9f9",
+  //   borderRadius: 12,
+  //   padding: 10,
+  //   marginVertical: 8,
+  //   elevation: 2, // For shadow effect on Android
+  //   shadowColor: "#000",
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 4,
+  // },
+  
+  // selectedCard: {
+  //   backgroundColor: "#cde6ff",
+  // },
+  
+  leftSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  
+  textContainer: {
+    marginLeft: 10,
+    flexShrink: 1, // Prevents text overflow
+  },
+  
+  // logo: {
+  //   width: 50,
+  //   height: 50,
+  //   borderRadius: 25, // Makes it rounded
+  //   backgroundColor: "#ddd", // Placeholder color
+  // },
+  
+  // name: {
+  //   fontSize: 16,
+  //   fontWeight: "bold",
+  //   color: "#333",
+  // },
+  
+  address: {
+    fontSize: 14,
+    color: "#666",
+  },
+  
+  phone: {
+    fontSize: 14,
+    color: "#666",
+  },
+  
+  brands: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#444",
+  },
+  
+  serviceImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10, // Rounded corners
+    backgroundColor: "#ddd", // Placeholder color
+  },
+  card: {
+    padding: 15,
+    marginVertical: 10,
+    backgroundColor: "#fff",
+    borderRadius: 15, // Increased for a softer look
+    // shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 }, // Adds depth
+    shadowOpacity: 0.1,
+    shadowRadius: 8, // Spreads the shadow
+    elevation: 5, // Required for Android shadow
+  },
+  selectedCard: {
+    backgroundColor: "#cde6ff",
+    shadowColor: "#007AFF", // Light blue glow effect when selected
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+  },
+  upperHalf: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Makes the logo rounded
+    marginRight: 10,
+  },
+  details: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  serviceCenterImage: {
+    width: "100%",
+    height: 150,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    resizeMode: "cover"
+  },
+  
+  
   
 });
 
