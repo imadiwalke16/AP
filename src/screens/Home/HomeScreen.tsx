@@ -21,6 +21,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       dispatch(getVehicles(user.id) as any);
     }
   }, [dispatch, user]);
+  useEffect(() => {
+    console.log("Selected Vehicle Data:", selectedVehicle);
+  }, [selectedVehicle]);
   
 
   return (
@@ -80,8 +83,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       </VehicleInfoColumn>
 
       {/* Right Column: Car Image */}
-      <VehicleImageContainer>
-        <VehicleImage source={{ uri: selectedVehicle.image || "https://imgs.search.brave.com/Oo4uN_0Zh-vEB2zAv3wJkyJe1xw_HLKzqhzQvKTmvlY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9oaXBz/LmhlYXJzdGFwcHMu/Y29tL2Ftdi1wcm9k/LWNhZC1hc3NldHMu/czMuYW1hem9uYXdz/LmNvbS92ZGF0L3N1/Ym1vZGVscy9mb3Jk/X211c3RhbmdfZm9y/ZC1tdXN0YW5nLWd0/LWNvdXBlXzIwMjAt/MTY0NDg2Mjk2NTU0/NC5qcGc_ZmlsbD0x/ODoxMSZyZXNpemU9/NjQwOio" }} />
+      <VehicleImageContainer key={selectedVehicle?.id}>
+        <VehicleImage source={{uri: selectedVehicle?.imgUrl || "https://static.autonation.com/actualcdn/54168aea5275406db1faf0753b0a1e32_392x294_Q75_V4.jpg" }} />
       </VehicleImageContainer>
     </VehicleInfoRow>
   </VehicleDetail>
@@ -419,8 +422,10 @@ const Footer = styled.View`
 `;
 
 const FooterText = styled.Text`
-  color: #666;
+  color: black;
   font-size: 14px;
+  font-weight: semi-bold;
+  
 `;
 const DealerCard = styled.View`
   flex-direction: row;
@@ -589,8 +594,8 @@ const VehicleImageContainer = styled.View`
 `;
 
 const VehicleImage = styled.Image`
-  width: 100%;
-  height: 100%;
+  width: 150%;
+  height: 200%;
   border-radius: 8px;
   resize-mode: contain;
 `;
