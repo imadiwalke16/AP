@@ -29,7 +29,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <Navbar>
         <Logo>AutoNation</Logo>
         <NavButtons>
-          <NavButton onPress={() => navigation.navigate("Home")}>Home</NavButton>
+          <NavButton onPress={() => navigation.navigate("Home")}></NavButton>
           <NotificationButton onPress={() => navigation.navigate("Notifications")}>
             <NotificationIcon>🔔</NotificationIcon>
             {/* Red notification badge */}
@@ -107,7 +107,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 {/* Service Advisor Card */}
 <AdvisorCard>
   <AdvisorLeft>
-    <AdvisorAvatar />
+  <Image 
+    source={{ uri: "https://img.freepik.com/premium-vector/customer-service_1162360-10046.jpg?ga=GA1.1.2048367604.1742730450&semt=ais_hybrid" }} 
+    style={{ width: 50, height: 50, borderRadius: 20 }} 
+  />
     <ChatButton>
       <ChatIcon>💬</ChatIcon>
       <Text>Chat</Text>
