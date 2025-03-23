@@ -9,12 +9,21 @@ const OTPScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleVerifyOTP = async () => {
-    if (otp === "123456") {
-      await dispatch(verifyOTP());
-    } else {
-      Alert.alert("Invalid OTP", "Please enter the correct OTP.");
+    if (otp.length !== 6) {
+      Alert.alert("Error", "OTP must be 6 digits");
+      return;
     }
+
+    dispatch(verifyOTP({ otp }))
+      .unwrap()
+      .then(() => {
+        Alert.alert("Success", "OTP Verified Successfully!");
+      })
+      .catch((err) => {
+        Alert.alert("Error", err);
+      });
   };
+
 
   return (
     <View style={styles.container}>

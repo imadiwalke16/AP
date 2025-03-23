@@ -61,13 +61,22 @@ export const fetchUserDetails = createAsyncThunk(
 );
 
 // OTP Verification Action
-export const verifyOTP = createAsyncThunk("auth/verifyOTP", async (_, { rejectWithValue }) => {
-  try {
-    return true;
-  } catch (error) {
-    return rejectWithValue("OTP verification failed");
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
+  async ({ otp }: { otp: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("http://10.0.2.2:5245/api/auth/verify-otp", { otp });
+
+      if (response.data.verified) {
+        return true; // OTP is correct
+      } else {
+        return rejectWithValue("Invalid OTP");
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "OTP verification failed");
+    }
   }
-});
+);
 
 const authSlice = createSlice({
   name: "auth",
