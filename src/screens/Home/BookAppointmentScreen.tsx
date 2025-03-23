@@ -58,7 +58,9 @@ const user = useSelector((state: RootState) => state.auth.user);
   };
 
   const handleProceedToVehicleSelection = () => {
-    dispatch(getVehicles(3) as any); // Replace 3 with the actual customer ID
+    if (user && user.id) {
+         dispatch(getVehicles(user.id) as any);
+       } // Replace 3 with the actual customer ID
   };
 
   const handleSelectTransportMode = (mode: string) => {

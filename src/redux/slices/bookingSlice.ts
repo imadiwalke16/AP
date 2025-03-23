@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { submitBooking } from "../../utils/api"; // Import the API function
+import { bookAppointment } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts"; // Import the API function
 
 interface BookingState {
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -16,7 +16,7 @@ export const confirmBooking = createAsyncThunk(
   "booking/confirm",
   async (bookingData: any, { rejectWithValue }) => {
     try {
-      return await submitBooking(bookingData);
+      return await bookAppointment(bookingData);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
