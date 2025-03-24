@@ -9,15 +9,20 @@ const NotificationsScreen: React.FC<ScreenProps<"Notifications">> = ({ navigatio
   const dispatch = useDispatch<AppDispatch>(); // ✅ Ensure correct dispatch type
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
   const [refreshing, setRefreshing] = useState(false);
+ const user = useSelector((state: RootState) => state.auth.user) ?? null;
 
-  useEffect(() => {
-    dispatch(fetchNotificationsThunk(3)); // Replace 3 with the actual user ID
-  }, [dispatch]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    dispatch(fetchNotificationsThunk(3)).finally(() => setRefreshing(false));
-  }, [dispatch]);
+ useEffect(() => {
+  if (user?.id) {
+    dispatch(fetchNotificationsThunk(user.id));
+  }
+}, [dispatch, user]);
+
+const onRefresh = useCallback(() => {
+  if (!user?.id) return; // Prevent calling API if user ID is undefined
+  setRefreshing(true);
+  dispatch(fetchNotificationsThunk(user.id)).finally(() => setRefreshing(false));
+}, [dispatch, user]);
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
