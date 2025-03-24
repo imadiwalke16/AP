@@ -80,3 +80,12 @@ export const bookAppointment = async (appointmentData: any) => {
     throw error;
   }
 };
+export const fetchNotifications = async (userId: number) => {
+  const response = await axios.get(`${API_BASE_URL}/notifications/${userId}`);
+  return response.data;
+};
+
+// Mark notification as read
+export const markNotificationAsRead = async (notificationId: number) => {
+  await axios.put(`${API_BASE_URL}/notifications/${notificationId}/read`);
+};

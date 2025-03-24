@@ -4,7 +4,7 @@ import serviceCenterReducer from "./slices/serviceCenterSlice";
 import serviceTypeReducer from "./slices/serviceTypeSlice";  // ✅ Added
 import vehicleReducer from "./slices/vehicleSlice";
 import transportReducer from "./slices/transportSlice";
-
+import notificationReducer from "./slices/NotificationSlice"
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -12,6 +12,7 @@ export const store = configureStore({
     serviceTypes: serviceTypeReducer,  // ✅ Added
     vehicles: vehicleReducer,
     transport: transportReducer, // ✅ Added transport slice
+    notifications: notificationReducer,
 
 
   },
