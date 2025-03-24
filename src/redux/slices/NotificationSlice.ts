@@ -73,10 +73,13 @@ const notificationSlice = createSlice({
 
       // Mark Notification as Read
       .addCase(markNotificationAsReadThunk.fulfilled, (state, action) => {
-        state.notifications = state.notifications.map((notification) =>
-          notification.id === action.payload ? { ...notification, isRead: true } : notification
-        );
+        const index = state.notifications.findIndex(n => n.id === action.payload);
+        if (index !== -1) {
+          state.notifications[index].isRead = true;  // ✅ Directly update state
+        }
       });
+      
+      
   },
 });
 
