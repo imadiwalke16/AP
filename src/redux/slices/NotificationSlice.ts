@@ -54,7 +54,12 @@ const initialState: NotificationState = {
 const notificationSlice = createSlice({
   name: "notifications",
   initialState,
-  reducers: {},
+  reducers: {
+    // ✅ New reducer to clear read notifications
+    clearReadNotifications: (state) => {
+      state.notifications = state.notifications.filter(n => !n.isRead);
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch Notifications
@@ -75,12 +80,12 @@ const notificationSlice = createSlice({
       .addCase(markNotificationAsReadThunk.fulfilled, (state, action) => {
         const index = state.notifications.findIndex(n => n.id === action.payload);
         if (index !== -1) {
-          state.notifications[index].isRead = true;  // ✅ Directly update state
+          state.notifications[index].isRead = true;
         }
       });
-      
       
   },
 });
 
+export const { clearReadNotifications } = notificationSlice.actions;
 export default notificationSlice.reducer;
