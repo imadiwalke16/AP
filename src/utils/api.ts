@@ -89,3 +89,15 @@ export const fetchNotifications = async (userId: number) => {
 export const markNotificationAsRead = async (notificationId: number) => {
   await axios.put(`${API_BASE_URL}/notifications/${notificationId}/read`);
 };
+export const fetchServiceHistory = async (vehicleId: number) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/ServiceHistory/vehicle/${vehicleId}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch service history");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching service history:", error);
+    return [];
+  }
+};
