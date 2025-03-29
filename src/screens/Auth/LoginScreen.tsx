@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const LoginScreen = ({ navigation }: any) => {
+  const [phone, setPhone] = useState(""); // Dummy phone field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
@@ -32,20 +33,53 @@ const LoginScreen = ({ navigation }: any) => {
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.subtitle}>Dealership</Text>
       <Text style={styles.dealership}>Autonation Inc.</Text>
+
+      {/* Dummy Phone Number Field */}
+      <View style={styles.inputContainer}>
+        <Icon name="phone" size={20} color="gray" style={styles.icon} />
+        <View style={styles.inputWrapper}>
+          <Text style={styles.label}>Phone No</Text>
+          <TextInput
+            placeholder="+91 9623338960"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            style={styles.input}
+          />
+        </View>
+      </View>
+
+      {/* Email Input */}
       <View style={styles.inputContainer}>
         <Icon name="envelope" size={20} color="gray" style={styles.icon} />
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Email</Text>
-          <TextInput placeholder="abc@email.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" style={styles.input} />
+          <TextInput
+            placeholder="abc@email.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={styles.input}
+          />
         </View>
       </View>
+
+      {/* Password Input */}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="gray" style={styles.icon} />
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Password</Text>
-          <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
         </View>
       </View>
+
       {status === "loading" ? (
         <ActivityIndicator size="large" color="blue" />
       ) : (
@@ -54,9 +88,10 @@ const LoginScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       )}
       {error && <Text style={styles.errorText}>{error}</Text>}
-     <View style={styles.footer}>
-             <Text style={styles.footerText}>Powered by CDK GLOBAL</Text>
-           </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Powered by CDK GLOBAL</Text>
+      </View>
     </View>
   );
 };
