@@ -20,3 +20,4 @@ export type MainStackParamList = {
 export type ScreenProps<T extends keyof AuthStackParamList | keyof MainStackParamList> = {
   navigation: NativeStackNavigationProp<AuthStackParamList & MainStackParamList, T>;
 };
+export type RootStackParamList = AuthStackParamList & MainStackParamList;

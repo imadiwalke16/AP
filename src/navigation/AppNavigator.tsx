@@ -17,8 +17,8 @@ const AppNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="OTP" component={OTPScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="OTPScreen" component={OTPScreen} /> {/* Fixed Name */}
+      <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> {/* Fixed Name */}
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="ServiceHistory" component={ServiceHistoryScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
