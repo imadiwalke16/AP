@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { bookAppointment } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts"; // Import the API function
+import { bookAppointment } from "/Users/aditya/AP/src/utils/api.ts"; // Import the API function
 
 interface BookingState {
   status: "idle" | "loading" | "succeeded" | "failed";

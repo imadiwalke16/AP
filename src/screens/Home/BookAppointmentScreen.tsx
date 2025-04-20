@@ -9,8 +9,8 @@ import { getVehicles } from "../../redux/slices/vehicleSlice";
 import { selectTransportMode } from "../../redux/slices/transportSlice";
 import { RootState } from "../../redux/store";
 import { Picker } from "@react-native-picker/picker";
-import { bookAppointment } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts";
-import {} from '/Users/aditya/CDKScreen/AP/src/redux/slices/authSlice.ts'
+import { bookAppointment } from "/Users/aditya/AP/src/utils/api.ts";
+import {} from '/Users/aditya/AP/src/redux/slices/authSlice.ts';
 const transportModes = [
   { name: "Self-Drive", cost: 0 },
   { name: "Pickup", cost: 200 },

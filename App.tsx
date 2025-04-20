@@ -8,6 +8,7 @@ import AuthNavigator from "./src/navigation/AuthNavigator";
 import MainNavigator from "./src/navigation/MainNavigator";
 import OTPScreen from "./src/screens/Auth/OTPScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LogLevel, OneSignal } from 'react-native-onesignal';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,18 @@ const AppContent = () => {
 };
 
 const App = () => {
+  OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+
+  OneSignal.initialize("f8ae4e66-67ea-4b24-ae52-5eaff18fabce");
+
+  OneSignal.Notifications.requestPermission(true);
+
+   // Method for listening for notification clicks
+   OneSignal.Notifications.addEventListener('click', (event) => {
+    console.log('OneSignal: notification clicked:', event);
+  });
+
+
   return (
     <Provider store={store}>
       <NavigationContainer>

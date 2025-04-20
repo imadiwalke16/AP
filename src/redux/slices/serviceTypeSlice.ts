@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getServiceTypesByServiceCenter } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts";  // ✅ Import from `api.ts`
+import { getServiceTypesByServiceCenter } from "/Users/aditya/AP/src/utils/api.ts";  // ✅ Import from `api.ts`
 
 interface ServiceType {
   id: number;

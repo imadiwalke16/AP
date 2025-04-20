@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchServiceHistory } from "/Users/aditya/CDKScreen/AP/src/utils/api.ts"; // Corrected import
+import { fetchServiceHistory } from "/Users/aditya/AP/src/utils/api.ts"; // Corrected import
 
 // Async thunk to fetch service history
 export const fetchServiceHistoryThunk = createAsyncThunk(

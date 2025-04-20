@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "574042391138",
-    "project_id": "cdkauth-489db",
-    "storage_bucket": "cdkauth-489db.firebasestorage.app"
+    "project_number": "921754431481",
+    "project_id": "cdkservice-cbb96",
+    "storage_bucket": "cdkservice-cbb96.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:574042391138:android:0a5f185cbb8ac9202ac73b",
+        "mobilesdk_app_id": "1:921754431481:android:131db58a3353e9fa7e9728",
         "android_client_info": {
           "package_name": "com.ap"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDeXGIeID64Ju3LdcOqGXN1sRkrlfjKpoA"
+          "current_key": "AIzaSyDM66wnVIDjG6ozl81GgPKMkDtEuxBHqp0"
         }
       ],
       "services": {

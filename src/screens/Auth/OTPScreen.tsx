@@ -27,7 +27,7 @@ const OTPScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("/Users/aditya/CDKScreen/AP/asset/image.png")} style={styles.logo} />
+      <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.instruction}>Your OTP has been sent to your registered mobile number</Text>
       <Text style={styles.mobileNumber}>+91 9623338960</Text>
