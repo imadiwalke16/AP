@@ -66,5 +66,69 @@ A **React Native** mobile application powered by a robust **.NET Core Web API ba
 
 ---
 
-## 📂 Project Structure
+
+---
+
+## 🧪 Development Practices
+
+- ✅ **Test-Driven Development (TDD)** approach
+- ✅ API-first integration planning
+- ✅ **Clean Architecture** to maximize maintainability & testability
+- ✅ **Modular UI** design system (under development)
+- ✅ Git branching & PR-based reviews to ensure quality merges
+
+---
+
+## 🧩 API Overview
+
+> Example Endpoints:
+
+- `POST /api/auth/login` – Authenticate user
+- `GET /api/vehicle/user/{userId}` – Fetch vehicles
+- `POST /api/appointment` – Book a service
+- `GET /api/notifications/{userId}` – Fetch notifications
+- `PUT /api/notifications/mark-as-read/{id}` – Mark notification read
+
+Full API docs available in Swagger.
+
+---
+
+## 🚦 Deployment Status
+
+| Environment | Status     | URL           |
+|-------------|------------|----------------|
+| Local Dev   | ✅ Active  | `localhost`    |
+| Staging     | 🟡 Planned | `TBD`          |
+| Production  | ❌ Pending | `TBD`          |
+
+---
+
+## 💼 About the Team
+
+This project is developed by **Aditya**, a passionate software engineer focused on mobile-first products, clean code, and scalable backend architecture. The project reflects hands-on expertise with end-to-end app development including devops, testing, and user-centric design.
+
+---
+
+## 📸 Screenshots
+
+> (Add images of the Home Screen, Service History, Booking Page, and Notifications UI)
+
+---
+
+## 📃 License
+
+This project is private and intended for demonstration and interview purposes only. Commercial usage is restricted unless explicitly permitted.
+
+---
+
+## 📬 Contact
+
+Feel free to reach out for collaboration or inquiries:
+
+- **Email**: aditya.dev@example.com  
+- **LinkedIn**: [linkedin.com/in/aditya](https://linkedin.com/in/aditya)
+
+---
+
+
 
