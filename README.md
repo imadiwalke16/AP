@@ -1,4 +1,4 @@
-# 🚗 Service Book App
+# 🚗 Service Book App -
 
 A **React Native** mobile application powered by a robust **.NET Core Web API backend** built on **Clean Architecture** principles. The **Service Book App** streamlines vehicle maintenance by enabling users to book service appointments, track service history, and receive real-time updates—all in one intuitive platform.
 
