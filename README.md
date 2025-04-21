@@ -1,97 +1,60 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🚗 Service Book App
 
-# Getting Started
+A **React Native** mobile application powered by a robust **.NET Core Web API backend** built on **Clean Architecture** principles. The **Service Book App** streamlines vehicle maintenance by enabling users to book service appointments, track service history, and receive real-time updates—all in one intuitive platform.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Step 1: Start Metro
+![alt text](<Screenshot 2025-04-21 at 7.40.15 PM-1.png>)
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🛠️ Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Frontend
+- **React Native CLI**
+- **Redux Toolkit** for state management
+- **SignalR Client** for real-time notifications
+- **Notifee (optional)** for advanced in-app and push notification handling
+- **Axios** for API integration
 
-```sh
-# Using npm
-npm start
+### Backend
+- **ASP.NET Core Web API**
+- **PostgreSQL** (via EF Core - Code First approach)
+- **SignalR** for WebSocket-based live notifications
+- **Background Services** for scheduled promotional notifications
+- **JWT Authentication**
+- **Clean Architecture** with layered separation (Domain, Application, Infrastructure, API)
 
-# OR using Yarn
-yarn start
-```
+---
 
-## Step 2: Build and run your app
+## 📱 Key Features
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### 🔧 Service Management
+- Book, view, and manage service appointments
+- View historical service records with filtering & sorting
+- Admin support for scheduling, cancellations, and updates
 
-### Android
+### 🔔 Real-time Notifications
+- In-app and push notifications using SignalR
+- Read/unread status, clearing, and dynamic updates
+- Supports both **transactional** (e.g., service updates) and **promotional** messages
 
-```sh
-# Using npm
-npm run android
+### 👤 User Authentication
+- Secure **JWT-based login**
+- Token refresh support (in pipeline)
+- Role-based access (Planned)
 
-# OR using Yarn
-yarn android
-```
+### 📊 Service History
+- Detailed service logs per vehicle
+- Service center info, status, remarks
+- Sortable, filterable UI for better UX
 
-### iOS
+### 🚀 Upcoming Enhancements
+- Push notification integration with Firebase/Notifee
+- Service reminders
+- Vehicle document storage
+- Light/dark mode toggle
+- Offline caching
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 📂 Project Structure
 
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

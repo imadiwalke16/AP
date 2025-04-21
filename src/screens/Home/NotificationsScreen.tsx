@@ -20,8 +20,6 @@ import { AppDispatch, RootState } from '../../redux/store';
 const NotificationsScreen: React.FC<ScreenProps<'Notifications'>> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
-
-  
   const [refreshing, setRefreshing] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user) ?? null;
 
