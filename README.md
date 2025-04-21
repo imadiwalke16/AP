@@ -57,15 +57,12 @@ A **React Native** mobile application powered by a robust **.NET Core Web API ba
 - Service center info, status, remarks
 - Sortable, filterable UI for better UX
 
-### 🚀 Upcoming Enhancements
+### 🚀 Enhancements
 - Push notification integration with Firebase/Notifee
 - Service reminders
 - Vehicle document storage
 - Light/dark mode toggle
 - Offline caching
-
----
-
 
 ---
 
@@ -89,7 +86,7 @@ A **React Native** mobile application powered by a robust **.NET Core Web API ba
 - `GET /api/notifications/{userId}` – Fetch notifications
 - `PUT /api/notifications/mark-as-read/{id}` – Mark notification read
 
-Full API docs available in Swagger.
+Full API docs available in Swagger.-
 
 ---
 
@@ -107,11 +104,6 @@ Full API docs available in Swagger.
 
 This project is developed by **Aditya**, a passionate software engineer focused on mobile-first products, clean code, and scalable backend architecture. The project reflects hands-on expertise with end-to-end app development including devops, testing, and user-centric design.
 
----
-
-## 📸 Screenshots
-
-> (Add images of the Home Screen, Service History, Booking Page, and Notifications UI)
 
 ---
 
@@ -125,8 +117,8 @@ This project is private and intended for demonstration and interview purposes on
 
 Feel free to reach out for collaboration or inquiries:
 
-- **Email**: aditya.dev@example.com  
-- **LinkedIn**: [linkedin.com/in/aditya](https://linkedin.com/in/aditya)
+- **Email**: walkeaditya3@gmail.com 
+- **LinkedIn**: www.linkedin.com/in/aditya-walke-666aw
 
 ---
 
