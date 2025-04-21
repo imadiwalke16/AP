@@ -1,97 +1,118 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🚗 Service Book App
 
-# Getting Started
+A **React Native** mobile application powered by a robust **.NET Core Web API backend** built on **Clean Architecture** principles. The **Service Book App** streamlines vehicle maintenance by enabling users to book service appointments, track service history, and receive real-time updates—all in one intuitive platform.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 🛠️ Tech Stack
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### Frontend
+- **React Native CLI**
+- **Redux Toolkit** for state management
+- **SignalR Client** for real-time notifications
+- **Notifee (optional)** for advanced in-app and push notification handling
+- **Axios** for API integration
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Backend
+- **ASP.NET Core Web API**
+- **PostgreSQL** (via EF Core - Code First approach)
+- **SignalR** for WebSocket-based live notifications
+- **Background Services** for scheduled promotional notifications
+- **JWT Authentication**
+- **Clean Architecture** with layered separation (Domain, Application, Infrastructure, API)
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
-```
+## 📱 Key Features
 
-## Step 2: Build and run your app
+### 🔧 Service Management
+- Book, view, and manage service appointments
+- View historical service records with filtering & sorting
+- Admin support for scheduling, cancellations, and updates
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### 🔔 Real-time Notifications
+- In-app and push notifications using SignalR
+- Read/unread status, clearing, and dynamic updates
+- Supports both **transactional** (e.g., service updates) and **promotional** messages
 
-### Android
+### 👤 User Authentication
+- Secure **JWT-based login**
+- Token refresh support (in pipeline)
+- Role-based access (Planned)
 
-```sh
-# Using npm
-npm run android
+### 📊 Service History
+- Detailed service logs per vehicle
+- Service center info, status, remarks
+- Sortable, filterable UI for better UX
 
-# OR using Yarn
-yarn android
-```
+### 🚀 Upcoming Enhancements
+- Push notification integration with Firebase/Notifee
+- Service reminders
+- Vehicle document storage
+- Light/dark mode toggle
+- Offline caching
 
-### iOS
+---
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## 🧪 Development Practices
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+- ✅ **Test-Driven Development (TDD)** approach
+- ✅ API-first integration planning
+- ✅ **Clean Architecture** to maximize maintainability & testability
+- ✅ **Modular UI** design system (under development)
+- ✅ Git branching & PR-based reviews to ensure quality merges
 
-```sh
-bundle install
-```
+---
 
-Then, and every time you update your native dependencies, run:
+## 🧩 API Overview
 
-```sh
-bundle exec pod install
-```
+> Example Endpoints:
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+- `POST /api/auth/login` – Authenticate user
+- `GET /api/vehicle/user/{userId}` – Fetch vehicles
+- `POST /api/appointment` – Book a service
+- `GET /api/notifications/{userId}` – Fetch notifications
+- `PUT /api/notifications/mark-as-read/{id}` – Mark notification read
 
-```sh
-# Using npm
-npm run ios
+Full API docs available in Swagger.
 
-# OR using Yarn
-yarn ios
-```
+---
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🚦 Deployment Status
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+| Environment | Status     | URL           |
+|-------------|------------|----------------|
+| Local Dev   | ✅ Active  | `localhost`    |
+| Staging     | 🟡 Planned | `TBD`          |
+| Production  | ❌ Pending | `TBD`          |
 
-## Step 3: Modify your app
+---
 
-Now that you have successfully run the app, let's make changes!
+## 💼 About the Team
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+This project is developed by **Aditya**, a passionate software engineer focused on mobile-first products, clean code, and scalable backend architecture. The project reflects hands-on expertise with end-to-end app development including devops, testing, and user-centric design.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+---
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## 📸 Screenshots
 
-## Congratulations! :tada:
+> (Add images of the Home Screen, Service History, Booking Page, and Notifications UI)
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## 📃 License
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+This project is private and intended for demonstration and interview purposes only. Commercial usage is restricted unless explicitly permitted.
 
-# Troubleshooting
+---
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## 📬 Contact
 
-# Learn More
+Feel free to reach out for collaboration or inquiries:
 
-To learn more about React Native, take a look at the following resources:
+- **Email**: walkeaditya3@gmail.com  
+- **LinkedIn**: 
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+---
+
