@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { login, fetchUserDetails } from "../../redux/slices/authSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const LoginScreen = ({ navigation }: any) => {
-  const [phone, setPhone] = useState(""); // Dummy phone field
+  // const [phone, setPhone] = useState(""); // Dummy phone field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.auth);
 
@@ -29,25 +39,13 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
+      <Image
+        source={require("/Users/aditya/AP/asset/image.png")}
+        style={styles.logo}
+      />
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.subtitle}>Dealership</Text>
       <Text style={styles.dealership}>Autonation Inc.</Text>
-
-      {/* Dummy Phone Number Field */}
-      <View style={styles.inputContainer}>
-        <Icon name="phone" size={20} color="gray" style={styles.icon} />
-        <View style={styles.inputWrapper}>
-          <Text style={styles.label}>Phone No</Text>
-          <TextInput
-            placeholder="+91 9623338960"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-            style={styles.input}
-          />
-        </View>
-      </View>
 
       {/* Email Input */}
       <View style={styles.inputContainer}>
@@ -65,18 +63,30 @@ const LoginScreen = ({ navigation }: any) => {
         </View>
       </View>
 
-      {/* Password Input */}
+      {/* Password Input with Toggle */}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="gray" style={styles.icon} />
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-          />
+          <View style={styles.passwordRow}>
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!isPasswordVisible}
+              style={[styles.input, { flex: 1 }]}
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible((prev) => !prev)}
+            >
+              <Icon
+                name={isPasswordVisible ? "eye" : "eye-slash"}
+                size={20}
+                color="gray"
+                style={{ marginLeft: 10 }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -126,7 +136,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "90%",
     backgroundColor: "#F5F5F5",
     borderRadius: 10,
@@ -135,6 +145,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+    marginTop: 10,
   },
   inputWrapper: {
     flex: 1,
@@ -142,10 +153,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     color: "gray",
+    marginBottom: 4,
   },
   input: {
     fontSize: 16,
     height: 40,
+  },
+  passwordRow: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   button: {
     backgroundColor: "#007BFF",
@@ -174,8 +190,8 @@ const styles = StyleSheet.create({
   footerText: {
     marginTop: 50,
     fontSize: 15,
-    color: "Black",
-    fontWeight: "semibold",
+    color: "black",
+    fontWeight: "600",
   },
 });
 

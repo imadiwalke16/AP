@@ -1,17 +1,22 @@
+
 import React from "react";
-import { Image, Text, ScrollView, FlatList } from "react-native"; // Added ScrollView and FlatList
+import { Image, Text, ScrollView, FlatList } from "react-native";
 import { ScreenProps } from "../../navigation/types";
 import { useDispatch, useSelector } from "react-redux";
 import { getVehicles, selectVehicle } from "../../redux/slices/vehicleSlice";
 import { fetchServiceHistoryThunk, selectServiceHistory } from "../../redux/slices/serviceHistorySlice";
 import { Picker } from "@react-native-picker/picker";
 import styled from "styled-components/native";
+import { RootState } from "../../redux/store";
 
 const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { list, selectedVehicle } = useSelector((state: any) => state.vehicles);
   const serviceHistory = useSelector(selectServiceHistory);
   const user = useSelector((state: any) => state.auth.user) ?? null;
+  const unreadCount = useSelector((state: RootState) =>
+    state.notifications.notifications.filter(n => !n.isRead).length
+  );
 
   React.useEffect(() => {
     if (user && user.id && list.length === 0) {
@@ -25,7 +30,6 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
     }
   }, [selectedVehicle, dispatch]);
 
-  // Format date to DD-MM-YYYY
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -34,7 +38,6 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
     return `${day}-${month}-${year}`;
   };
 
-  // Render each service history card
   const renderServiceHistoryCard = ({ item }: { item: any }) => (
     <ServiceHistoryCard>
       <CardContent>
@@ -75,6 +78,7 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
 
   return (
     <Container>
+      {/* Navbar with dynamic notification count */}
       <Navbar>
         <Logo>
           <Text>AutoNation</Text>
@@ -87,11 +91,13 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
             <NotificationIcon>
               <Text>🔔</Text>
             </NotificationIcon>
-            <NotificationBadge>
-              <NotificationCount>
-                <Text>3</Text>
-              </NotificationCount>
-            </NotificationBadge>
+            {unreadCount > 0 && (
+              <NotificationBadge>
+                <NotificationCount>
+                  <Text>{unreadCount}</Text>
+                </NotificationCount>
+              </NotificationBadge>
+            )}
           </NotificationButton>
           <ProfileButton onPress={() => navigation.navigate("Profile")}>
             <Text>👤</Text>
@@ -171,7 +177,7 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
               data={serviceHistory}
               renderItem={renderServiceHistoryCard}
               keyExtractor={(item) => item.id.toString()}
-              scrollEnabled={false} // Disable FlatList's scrolling since ScrollView handles it
+              scrollEnabled={false}
             />
           ) : (
             <Message>
@@ -190,7 +196,7 @@ const ServiceHistoryScreen: React.FC<ScreenProps<"ServiceHistory">> = ({ navigat
   );
 };
 
-// Styled components
+// Styled components (unchanged)
 const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
@@ -253,7 +259,7 @@ const ProfileButton = styled.Text`
 `;
 
 const ContentContainer = styled.View`
-  flex: 1; /* Ensure it takes up the available space */
+  flex: 1;
 `;
 
 const Section = styled.View`

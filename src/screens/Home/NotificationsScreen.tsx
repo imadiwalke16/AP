@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,9 @@ import { AppDispatch, RootState } from '../../redux/store';
 const NotificationsScreen: React.FC<ScreenProps<'Notifications'>> = ({ navigation }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
+  const unreadCount = useSelector((state: RootState) =>
+    state.notifications.notifications.filter(n => !n.isRead).length
+  );
   const [refreshing, setRefreshing] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user) ?? null;
 
@@ -39,10 +42,25 @@ const NotificationsScreen: React.FC<ScreenProps<'Notifications'>> = ({ navigatio
     dispatch(markNotificationAsReadThunk(notificationId));
   };
 
-  // ✅ Function to clear read notifications
   const handleClearRead = () => {
     dispatch(clearReadNotifications());
   };
+
+  const isOperational = (notification: any) => {
+    const content = `${notification.title} ${notification.message}`.toLowerCase();
+    const promotionalKeywords = ['offer', 'discount', 'sale', 'promotion', 'deal', 'save'];
+    return !promotionalKeywords.some(keyword => content.includes(keyword));
+  };
+
+  const sortedNotifications = useMemo(() => {
+    return [...notifications].sort((a, b) => {
+      const aIsOperational = isOperational(a);
+      const bIsOperational = isOperational(b);
+      if (aIsOperational && !bIsOperational) return -1;
+      if (!aIsOperational && bIsOperational) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [notifications]);
 
   const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
@@ -62,20 +80,54 @@ const NotificationsScreen: React.FC<ScreenProps<'Notifications'>> = ({ navigatio
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Notifications</Text>
+      {/* Navbar with dynamic notification count */}
+      <View style={styles.navbar}>
+        <Text style={styles.logo}>AutoNation</Text>
+        <View style={styles.navButtons}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.navButton}></Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.notificationButton}
+            onPress={() => navigation.navigate('Notifications')}
+          >
+            <Text style={styles.notificationIcon}>🔔</Text>
+            {unreadCount > 0 && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationCount}>{unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <Text style={styles.profileIcon}>👤</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      {/* ✅ "Clear Read" Button */}
-      <TouchableOpacity style={styles.clearButton} onPress={handleClearRead}>
-        <Text style={styles.clearButtonText}>Clear Read</Text>
-      </TouchableOpacity>
+      {/* Content container for notifications */}
+      <View style={styles.contentContainer}>
+        <Text style={styles.header}>Notifications</Text>
 
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      />
+        <TouchableOpacity style={styles.clearButton} onPress={handleClearRead}>
+          <Text style={styles.clearButtonText}>Clear Read</Text>
+        </TouchableOpacity>
+
+        {loading && <ActivityIndicator size="large" color="#0000ff" />}
+        <FlatList
+          data={sortedNotifications}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        />
+      </View>
+
+      {/* Footer container */}
+      <View style={styles.footerContainer}>
+        <Text style={styles.footer}>Powered by CDK GLOBAL</Text>
+      </View>
     </View>
   );
 };
@@ -83,8 +135,59 @@ const NotificationsScreen: React.FC<ScreenProps<'Notifications'>> = ({ navigatio
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#f5f5f5',
+  },
+  navbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 12,
+    backgroundColor: '#000',
+    alignItems: 'center',
+  },
+  logo: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  navButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navButton: {
+    color: '#fff',
+    marginRight: 24,
+    fontSize: 18,
+  },
+  notificationButton: {
+    position: 'relative',
+    marginRight: 20,
+  },
+  notificationIcon: {
+    fontSize: 22,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#f03e3e',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCount: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  profileButton: {},
+  profileIcon: {
+    fontSize: 22,
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 16,
   },
   header: {
     fontSize: 18,
@@ -116,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   unreadCard: {
-    backgroundColor: '#e3f2fd]',
+    backgroundColor: '#e3f2fd',
   },
   avatarContainer: {
     width: 40,
@@ -147,6 +250,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
     marginTop: 4,
+  },
+  footerContainer: {
+    padding: 24,
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  footer: {
+    fontSize: 12,
+    color: 'black',
   },
 });
 

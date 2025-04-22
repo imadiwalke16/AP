@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -8,37 +9,40 @@ import { Picker } from "@react-native-picker/picker";
 import styled from "styled-components/native";
 import { RootState } from "../../redux/store";
 
-// Define props type
 type Props = NativeStackScreenProps<MainStackParamList, "Home">;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { list, selectedVehicle, loading } = useSelector((state: any) => state.vehicles);
   const user = useSelector((state: RootState) => state.auth.user) ?? null;
+  const unreadCount = useSelector((state: RootState) =>
+    state.notifications.notifications.filter(n => !n.isRead).length
+  );
 
   useEffect(() => {
     if (user && user.id) {
       dispatch(getVehicles(user.id) as any);
     }
   }, [dispatch, user]);
+
   useEffect(() => {
     console.log("Selected Vehicle Data:", selectedVehicle);
   }, [selectedVehicle]);
-  
 
   return (
     <Container>
-      {/* Navbar */}
+      {/* Navbar with dynamic notification count */}
       <Navbar>
         <Logo>AutoNation</Logo>
         <NavButtons>
           <NavButton onPress={() => navigation.navigate("Home")}></NavButton>
           <NotificationButton onPress={() => navigation.navigate("Notifications")}>
             <NotificationIcon>🔔</NotificationIcon>
-            {/* Red notification badge */}
-            <NotificationBadge>
-              <NotificationCount>3</NotificationCount>
-            </NotificationBadge>
+            {unreadCount > 0 && (
+              <NotificationBadge>
+                <NotificationCount>{unreadCount}</NotificationCount>
+              </NotificationBadge>
+            )}
           </NotificationButton>
           <ProfileButton onPress={() => navigation.navigate("Profile")}>👤</ProfileButton>
         </NavButtons>
@@ -63,69 +67,74 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </PickerContainer>
         </Section>
 
-       {/* Vehicle Details */}
-{selectedVehicle && (
-  <VehicleDetail>
-    <VehicleTitle>{selectedVehicle.year} {selectedVehicle.model}</VehicleTitle>
-    <VehicleVin>{selectedVehicle.vin || "1FMDK02W88GA39298"}</VehicleVin>
-    
-    <VehicleInfoRow>
-      {/* Left Column: Model & Year */}
-      <VehicleInfoColumn>
-        <VehicleInfoItem>
-          <VehicleInfoLabel>Model</VehicleInfoLabel>
-          <VehicleInfoValue>{selectedVehicle.model}</VehicleInfoValue>
-        </VehicleInfoItem>
-        <VehicleInfoItem>
-          <VehicleInfoLabel>Year</VehicleInfoLabel>
-          <VehicleInfoValue>{selectedVehicle.year}</VehicleInfoValue>
-        </VehicleInfoItem>
-      </VehicleInfoColumn>
-
-      {/* Right Column: Car Image */}
-      <VehicleImageContainer key={selectedVehicle?.id}>
-        <VehicleImage source={{uri: selectedVehicle?.imgUrl || "https://static.autonation.com/actualcdn/54168aea5275406db1faf0753b0a1e32_392x294_Q75_V4.jpg" }} />
-      </VehicleImageContainer>
-    </VehicleInfoRow>
-  </VehicleDetail>
-)}
-
+        {/* Vehicle Details */}
+        {selectedVehicle && (
+          <VehicleDetail>
+            <VehicleTitle>{selectedVehicle.year} {selectedVehicle.model}</VehicleTitle>
+            <VehicleVin>{selectedVehicle.vin || "1FMDK02W88GA39298"}</VehicleVin>
+            <VehicleInfoRow>
+              <VehicleInfoColumn>
+                <VehicleInfoItem>
+                  <VehicleInfoLabel>Model</VehicleInfoLabel>
+                  <VehicleInfoValue>{selectedVehicle.model}</VehicleInfoValue>
+                </VehicleInfoItem>
+                <VehicleInfoItem>
+                  <VehicleInfoLabel>Year</VehicleInfoLabel>
+                  <VehicleInfoValue>{selectedVehicle.year}</VehicleInfoValue>
+                </VehicleInfoItem>
+              </VehicleInfoColumn>
+              <VehicleImageContainer key={selectedVehicle?.id}>
+                <VehicleImage
+                  source={{
+                    uri:
+                      selectedVehicle?.imgUrl ||
+                      "https://static.autonation.com/actualcdn/54168aea5275406db1faf0753b0a1e32_392x294_Q75_V4.jpg",
+                  }}
+                />
+              </VehicleImageContainer>
+            </VehicleInfoRow>
+          </VehicleDetail>
+        )}
 
         {/* Dealer Info Card */}
-        {/* Dealer Info Card */}
-<DealerCard>
-  <DealerLeft>
-    <DealerLogo>AutoNation</DealerLogo>
-    <CallButton>
-      <CallIcon>📞</CallIcon>
-      <Text>Call Dealer</Text>
-    </CallButton>
-  </DealerLeft>
-  <DealerRight>
-    <DealerLabel>Dealership</DealerLabel>
-    <DealerName>Ford of Portland</DealerName>
-  </DealerRight>
-</DealerCard>
-<View style={{ height: 16 }} />
-{/* Service Advisor Card */}
-<AdvisorCard>
-  <AdvisorLeft>
-  <Image 
-    source={{ uri: "https://img.freepik.com/premium-vector/customer-service_1162360-10046.jpg?ga=GA1.1.2048367604.1742730450&semt=ais_hybrid" }} 
-    style={{ width: 50, height: 50, borderRadius: 20 }} 
-  />
-    <ChatButton>
-      <ChatIcon>💬</ChatIcon>
-      <Text>Chat</Text>
-    </ChatButton>
-  </AdvisorLeft>
-  <AdvisorRight>
-    <AdvisorLabel>Service Advisor</AdvisorLabel>
-    <AdvisorName>James Smith</AdvisorName>
-  </AdvisorRight>
-</AdvisorCard>
+        <DealerCard>
+          <DealerLeft>
+            <DealerLogo>AutoNation</DealerLogo>
+            <CallButton>
+              <CallIcon>📞</CallIcon>
+              <Text>Call Dealer</Text>
+            </CallButton>
+          </DealerLeft>
+          <DealerRight>
+            <DealerLabel>Dealership</DealerLabel>
+            <DealerName>Ford of Portland</DealerName>
+          </DealerRight>
+        </DealerCard>
+        <View style={{ height: 16 }} />
 
-<View style={{ height: 16 }} />
+        {/* Service Advisor Card */}
+        <AdvisorCard>
+          <AdvisorLeft>
+            <Image
+              source={{
+                uri:
+                  "https://img.freepik.com/premium-vector/customer-service_1162360-10046.jpg?ga=GA1.1.2048367604.1742730450&semt=ais_hybrid",
+              }}
+              style={{ width: 50, height: 50, borderRadius: 20 }}
+            />
+            <ChatButton>
+              <ChatIcon>💬</ChatIcon>
+              <Text>Chat</Text>
+            </ChatButton>
+          </AdvisorLeft>
+          <AdvisorRight>
+            <AdvisorLabel>Service Advisor</AdvisorLabel>
+            <AdvisorName>James Smith</AdvisorName>
+          </AdvisorRight>
+        </AdvisorCard>
+
+        <View style={{ height: 16 }} />
+
         {/* Action Buttons */}
         <BottomButtons>
           <ServiceHistoryButton onPress={() => navigation.navigate("ServiceHistory")}>
@@ -145,7 +154,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// Styled Components
+// Styled Components (unchanged)
 const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
@@ -216,12 +225,6 @@ const Section = styled.View`
   margin-bottom: 16px;
 `;
 
-const SectionLabel = styled.Text`
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 8px;
-`;
-
 const PickerContainer = styled.View`
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -229,322 +232,11 @@ const PickerContainer = styled.View`
   background-color: #fff;
 `;
 
-// const VehicleDetail = styled.View`
-//   margin-bottom: 24px;
-// `;
-
-// const VehicleTitle = styled.Text`
-//   font-size: 25px;
-//   font-weight: bold;
-//   color: #333;
-// `;
-
-// const VehicleVin = styled.Text`
-//   font-size: 13px;
-//   color: #666;
-//   margin-bottom: 16px;
-// `;
-
-// const VehicleInfoRow = styled.View`
-//   flex-direction: row;
-//   justify-content: space-between;
-//   margin-top: 12px;
-// `;
-
-// const VehicleInfoColumn = styled.View`
-//   flex: 1;
-// `;
-
-// const VehicleInfoLabel = styled.Text`
-//   font-size: 16px;
-//   color: #666;
-// `;
-
-// const VehicleInfoValue = styled.Text`
-//   font-size: 16px;
-//   color: #333;
-//   font-weight: bold;
-// `;
-
-// const VehicleImage = styled.Image`
-//   width: 150px;
-//   height: 80px;
-//   border-radius: 8px;
-// `;
-
-// const DealerCard = styled.View`
-//   border: 1px solid #eee;
-//   border-radius: 12px;
-//   margin-bottom: 16px;
-//   overflow: hidden;
-// `;
-
-const DealerCardHeader = styled.View`
-  flex-direction: row;
-  padding: 16px;
-  border-bottom-width: 1px;
-  border-bottom-color: #eee;
-`;
-
-// const DealerLogo = styled.Text`
-//   width: 80px;
-//   font-weight: bold;
-//   padding-right: 16px;
-// `;
-
-const DealerInfoContainer = styled.View`
-  flex: 1;
-`;
-
-// const DealerLabel = styled.Text`
-//   font-size: 16px;
-//   color: #666;
-// `;
-
-// const DealerName = styled.Text`
-//   font-size: 18px;
-//   font-weight: bold;
-//   color: #333;
-// `;
-
-// const CallButton = styled.TouchableOpacity`
-//   flex-direction: row;
-//   align-items: center;
-//   padding: 12px;
-// `;
-
-// const CallIcon = styled.Text`
-//   color: #4285f4;
-//   font-size: 18px;
-//   margin-right: 8px;
-// `;
-
-const CallText = styled.Text`
-  color: #4285f4;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-// const AdvisorCard = styled.View`
-//   border: 1px solid #eee;
-//   border-radius: 12px;
-//   margin-bottom: 24px;
-//   overflow: hidden;
-// `;
-
-const AdvisorCardHeader = styled.View`
-  flex-direction: row;
-  padding: 16px;
-  border-bottom-width: 1px;
-  border-bottom-color: #eee;
-`;
-
-// const AdvisorAvatar = styled.View`
-//   width: 48px;
-//   height: 48px;
-//   border-radius: 24px;
-//   background-color: #ccc;
-//   margin-right: 16px;
-// `;
-
-const AdvisorInfoContainer = styled.View`
-  flex: 1;
-`;
-
-// const AdvisorLabel = styled.Text`
-//   font-size: 16px;
-//   color: #666;
-// `;
-
-// const AdvisorName = styled.Text`
-//   font-size: 18px;
-//   font-weight: bold;
-//   color: #333;
-// `;
-
-// const ChatButton = styled.TouchableOpacity`
-//   flex-direction: row;
-//   align-items: center;
-//   padding: 12px;
-// `;
-
-// const ChatIcon = styled.Text`
-//   color: #4285f4;
-//   font-size: 18px;
-//   margin-right: 8px;
-// `;
-
-const ChatText = styled.Text`
-  color: #4285f4;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const BottomButtons = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 30px;
-`;
-
-const ServiceHistoryButton = styled.TouchableOpacity`
-  background-color: #eef3fd;
-  padding: 16px;
-  border-radius: 10px;
-  flex: 1;
-  margin-right: 8px;
-  align-items: center;
-`;
-
-const ServiceHistoryText = styled.Text`
-  color: #4285f4;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const BookAppointmentButton = styled.TouchableOpacity`
-  background-color: #4285f4;
-  padding: 16px;
-  border-radius: 10px;
-  flex: 1;
-  margin-left: 8px;
-  align-items: center;
-`;
-
-const BookAppointmentText = styled.Text`
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const Footer = styled.View`
-  padding: 24px;
-  align-items: center;
-`;
-
-const FooterText = styled.Text`
-  color: black;
-  font-size: 14px;
-  font-weight: semi-bold;
-  
-`;
-const DealerCard = styled.View`
-  flex-direction: row;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fff;
-  height: 100px;  /* Limit height */
-  align-items: center; /* Align content properly */
-  elevation: 3; /* Elevation for Android */
-`;
-
-const DealerLeft = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-right-width: 1px;
-  border-right-color: #eee;
-`;
-
-const DealerLogo = styled.Text`
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 8px;
-`;
-
-const CallButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  background-color: #eef3fd;
-padding: 6px 10px; /* Reduce button padding */
-  border-radius: 8px;
-`;
-
-const CallIcon = styled.Text`
-  font-size: 18px;
-  margin-right: 6px;
-`;
-
-const DealerRight = styled.View`
-  flex: 1;
-  justify-content: center;
-  padding: 8px; /* Reduce padding */
-`;
-
-const DealerLabel = styled.Text`
-  font-size: 14px;
-  color: #666;
-`;
-
-const DealerName = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-`;
-
-// Service Advisor Card Fix
-const AdvisorCard = styled.View`
-  flex-direction: row;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fff;
-    height: 100px;
-    elevation: 3; /* Elevation for Android */
-`;
-
-const AdvisorLeft = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-right-width: 1px;
-  border-right-color: #eee;
-`;
-
-const AdvisorAvatar = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 25px;
-  background-color: #ccc;
-  margin-bottom: 8px;
-`;
-
-const ChatButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  background-color: #eef3fd;
-  padding: 6px 10px;
-  border-radius: 8px;
-`;
-
-const ChatIcon = styled.Text`
-  font-size: 18px;
-  margin-right: 6px;
-`;
-
-const AdvisorRight = styled.View`
-  flex: 1;
-  justify-content: center;
-  padding: 8px;
-`;
-
-const AdvisorLabel = styled.Text`
-  font-size: 14px;
-  color: #666;
-`;
-
-const AdvisorName = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-`;
 const VehicleDetail = styled.View`
   margin-bottom: 24px;
   padding: 16px;
   border-radius: 10px;
-  background-color : #ffff;
+  background-color: #ffff;
 `;
 
 const VehicleTitle = styled.Text`
@@ -600,6 +292,156 @@ const VehicleImage = styled.Image`
   resize-mode: contain;
 `;
 
+const DealerCard = styled.View`
+  flex-direction: row;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  height: 100px;
+  align-items: center;
+  elevation: 3;
+`;
 
+const DealerLeft = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-right-width: 1px;
+  border-right-color: #eee;
+`;
+
+const DealerLogo = styled.Text`
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+`;
+
+const CallButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  background-color: #eef3fd;
+  padding: 6px 10px;
+  border-radius: 8px;
+`;
+
+const CallIcon = styled.Text`
+  font-size: 18px;
+  margin-right: 6px;
+`;
+
+const DealerRight = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 8px;
+`;
+
+const DealerLabel = styled.Text`
+  font-size: 14px;
+  color: #666;
+`;
+
+const DealerName = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+`;
+
+const AdvisorCard = styled.View`
+  flex-direction: row;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  height: 100px;
+  elevation: 3;
+`;
+
+const AdvisorLeft = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-right-width: 1px;
+  border-right-color: #eee;
+`;
+
+const ChatButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  background-color: #eef3fd;
+  padding: 6px 10px;
+  border-radius: 8px;
+`;
+
+const ChatIcon = styled.Text`
+  font-size: 18px;
+  margin-right: 6px;
+`;
+
+const AdvisorRight = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 8px;
+`;
+
+const AdvisorLabel = styled.Text`
+  font-size: 14px;
+  color: #666;
+`;
+
+const AdvisorName = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+`;
+
+const BottomButtons = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 30px;
+`;
+
+const ServiceHistoryButton = styled.TouchableOpacity`
+  background-color: #eef3fd;
+  padding: 16px;
+  border-radius: 10px;
+  flex: 1;
+  margin-right: 8px;
+  align-items: center;
+`;
+
+const ServiceHistoryText = styled.Text`
+  color: #4285f4;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const BookAppointmentButton = styled.TouchableOpacity`
+  background-color: #4285f4;
+  padding: 16px;
+  border-radius: 10px;
+  flex: 1;
+  margin-left: 8px;
+  align-items: center;
+`;
+
+const BookAppointmentText = styled.Text`
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const Footer = styled.View`
+  padding: 24px;
+  align-items: center;
+`;
+
+const FooterText = styled.Text`
+  color: black;
+  font-size: 14px;
+  font-weight: 600;
+`;
 
 export default HomeScreen;
