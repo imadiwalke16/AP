@@ -5,6 +5,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 interface AuthState {
   user: null | { id: number; email: string; role: string; name: string; phoneNumber: string };
   token: string | null;
+  sessionToken: string | null;
+  themeConfig: { navbarColor: string } | null;
+  logoUrl: string | null;
+  backgroundImageUrl: string | null; // New field for background image
   otpVerified: boolean;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -13,6 +17,10 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   token: null,
+  sessionToken: null,
+  themeConfig: { navbarColor: "#000" },
+  logoUrl: null,
+  backgroundImageUrl: null, // Initialize new field
   otpVerified: false,
   status: "idle",
   error: null,
@@ -21,54 +29,45 @@ const initialState: AuthState = {
 // Login API call
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }, { dispatch, rejectWithValue }) => {
+  async ({ email, password, sessionToken }: { email: string; password: string; sessionToken: string }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post("http://10.0.2.2:5245/api/auth/login", { email, password });
-
-      // Store token
+      const response = await axios.post("http://10.0.2.2:5245/api/auth/login", { email, password, sessionToken });
       await AsyncStorage.setItem("token", response.data.token);
-
-      // Fetch user details after login
       dispatch(fetchUserDetails());
-
       return { token: response.data.token };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
+      return rejectWithValue(error.response?.data || "Login failed");
     }
   }
 );
 
-// Fetch user details API call
+// Fetch user details
 export const fetchUserDetails = createAsyncThunk(
   "auth/fetchUserDetails",
   async (_, { rejectWithValue }) => {
     try {
       const token = await AsyncStorage.getItem("token");
-
       if (!token) {
         return rejectWithValue("No token found");
       }
-
       const response = await axios.get("http://10.0.2.2:5245/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      return response.data; // Expecting { id, email, role, name, phoneNumber }
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch user details");
     }
   }
 );
 
-// OTP Verification Action
+// OTP Verification
 export const verifyOTP = createAsyncThunk(
   "auth/verifyOTP",
   async ({ otp }: { otp: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post("http://10.0.2.2:5245/api/auth/verify-otp", { otp });
-
       if (response.data.verified) {
-        return true; // OTP is correct
+        return true;
       } else {
         return rejectWithValue("Invalid OTP");
       }
@@ -85,8 +84,23 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.sessionToken = null;
+      state.themeConfig = { navbarColor: "#000" };
+      state.logoUrl = null;
       state.otpVerified = false;
       AsyncStorage.removeItem("token");
+    },
+    setSessionToken: (state, action) => {
+      state.sessionToken = action.payload;
+    },
+    setThemeConfig: (state, action) => {
+      state.themeConfig = action.payload;
+    },
+    setLogoUrl: (state, action) => {
+      state.logoUrl = action.payload;
+    },
+    setBackgroundImageUrl: (state, action) => {
+      state.backgroundImageUrl = action.payload; // New reducer
     },
   },
   extraReducers: (builder) => {
@@ -109,7 +123,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload; // ✅ Store user details in state
+        state.user = action.payload;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
         state.status = "failed";
@@ -121,5 +135,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setSessionToken, setThemeConfig, setLogoUrl, setBackgroundImageUrl } = authSlice.actions;
 export default authSlice.reducer;

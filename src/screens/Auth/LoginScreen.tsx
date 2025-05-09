@@ -15,23 +15,27 @@ import { AppDispatch, RootState } from "../../redux/store";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const LoginScreen = ({ navigation }: any) => {
-  // const [phone, setPhone] = useState(""); // Dummy phone field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const { status, error } = useSelector((state: RootState) => state.auth);
+  const { status, error, sessionToken, logoUrl } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter email and password");
       return;
     }
+    if (!sessionToken) {
+      Alert.alert("Error", "No dealer code validated");
+      return;
+    }
 
-    const result = await dispatch(login({ email, password }));
+    const result = await dispatch(login({ email, password, sessionToken }));
 
     if (result.meta.requestStatus === "fulfilled") {
       dispatch(fetchUserDetails());
+      // No manual navigation needed; AppNavigator handles it via token
     } else {
       Alert.alert("Login Failed", error || "Invalid credentials");
     }
@@ -39,15 +43,15 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("/Users/aditya/AP/asset/image.png")}
-        style={styles.logo}
-      />
+      {logoUrl ? (
+        <Image source={{ uri: logoUrl }} style={styles.logo} />
+      ) : (
+        <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
+      )}
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.subtitle}>Dealership</Text>
-      <Text style={styles.dealership}>Autonation Inc.</Text>
+      <Text style={styles.dealership}></Text>
 
-      {/* Email Input */}
       <View style={styles.inputContainer}>
         <Icon name="envelope" size={20} color="gray" style={styles.icon} />
         <View style={styles.inputWrapper}>
@@ -63,7 +67,6 @@ const LoginScreen = ({ navigation }: any) => {
         </View>
       </View>
 
-      {/* Password Input with Toggle */}
       <View style={styles.inputContainer}>
         <Icon name="lock" size={20} color="gray" style={styles.icon} />
         <View style={styles.inputWrapper}>
@@ -115,10 +118,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    height: 50, // Reduced height for better fit
+    width: undefined, // Let width adjust to maintain aspect ratio
+    aspectRatio: 3, // Approximate aspect ratio for Ford logo (adjust as needed)
+    resizeMode: "contain", // Ensure the full logo is shown without cropping
     marginBottom: 10,
-  },
+  } as const,
   title: {
     fontSize: 22,
     fontWeight: "bold",

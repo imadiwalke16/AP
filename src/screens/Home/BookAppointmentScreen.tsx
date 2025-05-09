@@ -1,415 +1,105 @@
-import React, { useState, useMemo } from "react";
-import { 
-  View, Text, TextInput, Button, FlatList, StyleSheet, Alert, TouchableOpacity, Image
-} from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchServiceCenters } from "../../redux/slices/serviceCenterSlice";
-import { fetchServiceTypes } from "../../redux/slices/serviceTypeSlice";
-import { getVehicles } from "../../redux/slices/vehicleSlice";
-import { selectTransportMode } from "../../redux/slices/transportSlice";
-import { RootState } from "../../redux/store";
-import { Picker } from "@react-native-picker/picker";
-import { bookAppointment } from "/Users/aditya/AP/src/utils/api.ts";
-import {} from '/Users/aditya/AP/src/redux/slices/authSlice.ts';
-const transportModes = [
-  { name: "Self-Drive", cost: 0 },
-  { name: "Pickup", cost: 200 },
-  { name: "Drop-Off", cost: 200 },
-];
+import React, { useState, useRef } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import styled from 'styled-components/native';
+import { MainStackParamList } from '../../navigation/MainNavigator';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
-const BookAppointmentScreen: React.FC = () => {
-  const [pinCode, setPinCode] = useState("");
-  const [selectedCenter, setSelectedCenter] = useState<number | null>(null);
-  const [selectedServices, setSelectedServices] = useState<number[]>([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<number | null>(null);
-  const [selectedTransport, setSelectedTransport] = useState<string | null>(null);
-const user = useSelector((state: RootState) => state.auth.user);
+type Props = NativeStackScreenProps<MainStackParamList, 'BookAppointment'>;
 
-  const dispatch = useDispatch();
-  const { centers } = useSelector((state: RootState) => state.serviceCenters);
-  const { services } = useSelector((state: RootState) => state.serviceTypes);
-  const { list: vehicles } = useSelector((state: RootState) => state.vehicles);
+const BookAppointmentScreen: React.FC<Props> = ({ navigation }) => {
+  const [loading, setLoading] = useState(true);
+  const user = useSelector((state: RootState) => state.auth.user) ?? null;
+  const webViewRef = useRef<WebView>(null);
 
-  const handleSearch = () => {
-    if (pinCode.length !== 6) {
-      Alert.alert("Invalid Pin Code", "Please enter a valid 6-digit pin code.");
-      return;
-    }
-    dispatch(fetchServiceCenters(pinCode) as any);
-  };
+  const injectedJavaScript = `
+    (function pollForButton(attemptsLeft) {
+      if (attemptsLeft <= 0) {
+        window.ReactNativeWebView.postMessage("Gave up: Returning Customer button not found after 10 attempts");
+        return;
+      }
+      const returnButton = document.querySelector('[data-testid="repeatCust-button"]');
+      if (returnButton) {
+        returnButton.click();
+        window.ReactNativeWebView.postMessage("Clicked Returning Customer");
+      } else {
+        window.ReactNativeWebView.postMessage("Attempt " + (11 - attemptsLeft) + ": Returning Customer button not found, retrying...");
+        setTimeout(() => pollForButton(attemptsLeft - 1), 500);
+      }
+    })(10);
+    true; // Required by WebView
+  `;
 
-  const handleSelectServiceCenter = (centerId: number) => {
-    setSelectedCenter(centerId);
-    setSelectedServices([]);
-    dispatch(fetchServiceTypes(centerId) as any);
-  };
-
-  const handleToggleService = (serviceId: number) => {
-    setSelectedServices((prevSelected) =>
-      prevSelected.includes(serviceId) ? prevSelected.filter((id) => id !== serviceId) : [...prevSelected, serviceId]
-    );
-  };
-
-  const handleGoBack = () => {
-    setSelectedCenter(null);
-    setSelectedServices([]);
-    setSelectedVehicle(null);
-    setSelectedTransport(null);
-  };
-
-  const handleProceedToVehicleSelection = () => {
-    if (user && user.id) {
-         dispatch(getVehicles(user.id) as any);
-       } // Replace 3 with the actual customer ID
-  };
-
-  const handleSelectTransportMode = (mode: string) => {
-    setSelectedTransport(mode);
-    dispatch(selectTransportMode(mode));
-  };
-
-  // Calculate Total Cost
-  const totalCost = useMemo(() => {
-    const serviceCost = selectedServices.reduce((total, id) => {
-      const service = services.find((s) => s.id === id);
-      return total + (service ? service.price : 0);
-    }, 0);
-
-    const transportCost = transportModes.find((t) => t.name === selectedTransport)?.cost || 0;
-
-    return serviceCost + transportCost;
-  }, [selectedServices, selectedTransport, services]);
-
-  const handleConfirmBooking = async () => {
-    try {
-      const appointmentData = {
-        appointmentDate: new Date().toISOString(),  // Use current date/time or selected date
-        userId: user?.id,  // Ensure this comes from Redux or Context
-        vehicleId: selectedVehicle,  
-        serviceCenterId: selectedCenter,
-        transportMode: selectedTransport,  
-        transportCharge: totalCost,  
-        serviceOfferedIds: selectedServices,  
-      };
-  
-      await bookAppointment(appointmentData);  // Call API function
-  
-      Alert.alert("Success", "Booked Successfully", [
-        { text: "OK", onPress: resetBookingFlow }, // Reset after success
-      ]); // Show alert on success
-    } catch (error) {
-      Alert.alert("Error", "Booking failed. Please try again.");  // Handle errors
-    }
-  };
-  const resetBookingFlow = () => {
-    setPinCode("");
-    setSelectedCenter(null);
-    setSelectedServices([]);
-    setSelectedVehicle(null);
-    setSelectedTransport(null);
+  const onMessageHandler = (event: any) => {
+    console.log("WebView Log:", event.nativeEvent.data);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Book Appointment</Text>
-
-      {!selectedCenter && (
-        <>
-          <Text style={styles.label}>Enter Pin Code:</Text>
-          <TextInput 
-            style={styles.input} 
-            value={pinCode} 
-            onChangeText={setPinCode} 
-            keyboardType="numeric" 
-            maxLength={6} 
-            placeholder="560001" 
-          />
-          <Button title="Find Service Centers" onPress={handleSearch} />
-        </>
+    <Container>
+      {loading && (
+        <LoadingContainer>
+          <ActivityIndicator size="large" color="#4285f4" />
+        </LoadingContainer>
       )}
-
-      {!selectedCenter && (
-        <FlatList
-        data={centers}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={[styles.card, selectedCenter === item.id && styles.selectedCard]} 
-            onPress={() => handleSelectServiceCenter(item.id)}
-          >
-            {/* Upper Half - Service Center Details */}
-            <View style={styles.upperHalf}>
-              <Image source={{ uri: "https://imgs.search.brave.com/Qpc6eLMV98mnRD_0EvtDo4daMQ-PuZesKBOflmq28Vs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9mL2Y0L0JN/V19sb2dvXyUyOGdy/YXklMjkuc3ZnLzIy/MHB4LUJNV19sb2dv/XyUyOGdyYXklMjku/c3ZnLnBuZw"}} style={styles.logo} />
-              <View style={styles.details}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text>{item.address}</Text>
-                <Text>{item.phoneNumber}</Text>
-                <Text>Brands: {item.brandsSupported.join(", ")}</Text>
-              </View>
-            </View>
-      
-            {/* Lower Half - Service Center Image */}
-            <Image source={{uri:"https://imgs.search.brave.com/OutYZ504q182I7Tv6graXb0XqaYd55xBu_hU-Iiab7o/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9waWN0/dXJlcy5kZWFsZXIu/Y29tL2IvYm13b2Zk/YWxsYXMvMTU4OS9h/NTAyY2ZiMDNmMjhi/ZWU4ZjEwNjIyYmIx/ZWI0OGFiMXguanBn" }} style={styles.serviceCenterImage} />
-          </TouchableOpacity>
-        )}
+      {/* Placeholder for future custom Back button */}
+      {/* <StyledBackButton onPress={() => navigation.goBack()}>
+        <StyledBackText>Back</StyledBackText>
+      </StyledBackButton> */}
+      <StyledWebView
+        ref={webViewRef}
+        source={{ uri: 'https://api-dit.connectcdk.com/api/nc-cosa-consumer-ui-stage/v1/?cid=320004' }}
+        injectedJavaScript={injectedJavaScript}
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => {
+          setLoading(false);
+          webViewRef.current?.injectJavaScript(injectedJavaScript);
+        }}
+        onMessage={onMessageHandler}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        mixedContentMode="always"
+        originWhitelist={['*']}
       />
-      
-      
-      )}
-
-      {selectedCenter && !selectedVehicle && (
-        <>
-          <Button title="← Back to Service Centers" onPress={handleGoBack} />
-          <Text style={styles.subTitle}>Available Services:</Text>
-
-          <FlatList
-            data={services}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity 
-                style={[styles.serviceCard, selectedServices.includes(item.id) && styles.selectedServiceCard]} 
-                onPress={() => handleToggleService(item.id)}
-              >
-                <Text style={styles.serviceName}>{item.name}</Text>
-                <Text>Price: ₹{item.price}</Text>
-              </TouchableOpacity>
-            )}
-          />
-
-          {selectedServices.length > 0 && (
-            <Button title="Proceed to Vehicle Selection" onPress={handleProceedToVehicleSelection} />
-          )}
-        </>
-      )}
-
-      {selectedServices.length > 0 && !selectedTransport && (
-        <>
-          <Text style={styles.subTitle}>Select Your Vehicle:</Text>
-
-          <Picker 
-            selectedValue={selectedVehicle} 
-            onValueChange={(value) => setSelectedVehicle(value)}
-          >
-            <Picker.Item label="Select a Vehicle" value={null} />
-            {vehicles?.map((vehicle: any) => (
-              <Picker.Item 
-                key={vehicle.id} 
-                label={`${vehicle.make} ${vehicle.model}`}  
-                value={vehicle.id} 
-              />
-            ))}
-          </Picker>
-
-          {selectedVehicle && (
-            <Button title="Proceed to Transport Selection" onPress={() => setSelectedTransport("")} />
-          )}
-        </>
-      )}
-
-      {selectedVehicle && selectedTransport === "" && (
-        <>
-          <Text style={styles.subTitle}>Select Transport Mode:</Text>
-          <FlatList
-            data={transportModes}
-            keyExtractor={(item) => item.name}
-            renderItem={({ item }) => (
-              <TouchableOpacity 
-                style={styles.transportCard} 
-                onPress={() => handleSelectTransportMode(item.name)}
-              >
-                <Text style={styles.transportName}>{item.name} (₹{item.cost})</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </>
-      )}
-
-{selectedTransport && (
-  <>
-    {/* Order Summary */}
-    <View style={styles.summaryContainer}>
-      <Text style={styles.summaryTitle}>Order Summary</Text>
-      
-      <Text style={styles.summaryItem}>🛠️ Service Center: {centers.find(c => c.id === selectedCenter)?.name}</Text>
-      
-      <Text style={styles.summaryItem}>📌 Services Selected:</Text>
-      {selectedServices.map(serviceId => {
-        const service = services.find(s => s.id === serviceId);
-        return (
-          <Text key={serviceId} style={styles.summarySubItem}>
-            - {service?.name} (₹{service?.price})
-          </Text>
-        );
-      })}
-      
-      <Text style={styles.summaryItem}>🚗 Vehicle: {vehicles.find(v => v.id === selectedVehicle)?.make} {vehicles.find(v => v.id === selectedVehicle)?.model}</Text>
-      
-      <Text style={styles.summaryItem}>🚚 Transport Mode: {selectedTransport}</Text>
-
-      <Text style={styles.summaryTotal}>💰 Total Cost: ₹{totalCost}</Text>
-    </View>
-
-    {/* Confirm Booking Button */}
-    <Button title="Confirm Booking" onPress={handleConfirmBooking} />
-  </>
-)}
-
-    </View>
+    </Container>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
-  // card: { padding: 15, marginVertical: 10, backgroundColor: "#f9f9f9", borderRadius: 5 },
-  // selectedCard: { backgroundColor: "#cde6ff" },
-  // name: { fontSize: 18, fontWeight: "bold" },
-  subTitle: { fontSize: 20, fontWeight: "bold", marginTop: 15 },
-  serviceCard: { padding: 10, marginVertical: 5, backgroundColor: "#e9e9e9", borderRadius: 5 },
-  selectedServiceCard: { backgroundColor: "#cde6ff" },
-  serviceName: { fontSize: 16, fontWeight: "bold" },
-  transportCard: { padding: 10, marginVertical: 5, backgroundColor: "#e9e9e9", borderRadius: 5 },
-  transportName: { fontSize: 16, fontWeight: "bold" },
-  finalText: { fontSize: 18, fontWeight: "bold", color: "green", marginTop: 20 },
-  summaryContainer: { 
-    backgroundColor: "#f4f4f4", 
-    padding: 15, 
-    borderRadius: 8, 
-    marginVertical: 15 
-  },
-  summaryTitle: { 
-    fontSize: 18, 
-    fontWeight: "bold", 
-    marginBottom: 5 
-  },
-  summaryItem: { 
-    fontSize: 16, 
-    marginVertical: 3 
-  },
-  summarySubItem: { 
-    fontSize: 14, 
-    marginLeft: 10 
-  },
-  summaryTotal: { 
-    fontSize: 18, 
-    fontWeight: "bold", 
-    color: "green", 
-    marginTop: 10 
-  },
-  // card: {
-  //   flexDirection: "row",  
-  //   alignItems: "center",
-  //   justifyContent: "space-between",
-  //   backgroundColor: "#f9f9f9",
-  //   borderRadius: 12,
-  //   padding: 10,
-  //   marginVertical: 8,
-  //   elevation: 2, // For shadow effect on Android
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 4,
-  // },
-  
-  // selectedCard: {
-  //   backgroundColor: "#cde6ff",
-  // },
-  
-  leftSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  
-  textContainer: {
-    marginLeft: 10,
-    flexShrink: 1, // Prevents text overflow
-  },
-  
-  // logo: {
-  //   width: 50,
-  //   height: 50,
-  //   borderRadius: 25, // Makes it rounded
-  //   backgroundColor: "#ddd", // Placeholder color
-  // },
-  
-  // name: {
-  //   fontSize: 16,
-  //   fontWeight: "bold",
-  //   color: "#333",
-  // },
-  
-  address: {
-    fontSize: 14,
-    color: "#666",
-  },
-  
-  phone: {
-    fontSize: 14,
-    color: "#666",
-  },
-  
-  brands: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#444",
-  },
-  
-  serviceImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10, // Rounded corners
-    backgroundColor: "#ddd", // Placeholder color
-  },
-  card: {
-    padding: 15,
-    marginVertical: 10,
-    backgroundColor: "#fff",
-    borderRadius: 15, // Increased for a softer look
-    // shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 }, // Adds depth
-    shadowOpacity: 0.1,
-    shadowRadius: 8, // Spreads the shadow
-    elevation: 5, // Required for Android shadow
-  },
-  selectedCard: {
-    backgroundColor: "#cde6ff",
-    shadowColor: "#007AFF", // Light blue glow effect when selected
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-  },
-  upperHalf: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingBottom: 10,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25, // Makes the logo rounded
-    marginRight: 10,
-  },
-  details: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  serviceCenterImage: {
-    width: "100%",
-    height: 150,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    resizeMode: "cover"
-  },
-  
-  
-  
-});
+// Styled Components
+const Container = styled.View`
+  flex: 1;
+  background-color: #ffffff;
+`;
+
+const LoadingContainer = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+`;
+
+const StyledWebView = styled(WebView)`
+  flex: 1;
+`;
+
+// Placeholder for custom Back button styles
+// const StyledBackButton = styled.TouchableOpacity`
+//   background-color: #4285f4;
+//   padding: 12px;
+//   border-radius: 8px;
+//   margin: 16px;
+//   align-items: center;
+// `;
+
+// const StyledBackText = styled.Text`
+//   color: #fff;
+//   font-size: 16px;
+//   font-weight: bold;
+// `;
 
 export default BookAppointmentScreen;

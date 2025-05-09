@@ -2,6 +2,25 @@ import axios from "axios";
 
 const API_BASE_URL = "http://10.0.2.2:5245/api";
 
+export const validateCode = async (code: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/validate-code`, { code });
+    return response.data; // { dealerId, name, themeConfig, sessionToken }
+  } catch (error: any) {
+    throw new Error(error.response?.data || "Failed to validate code");
+  }
+};
+
+// ✅ Login with sessionToken
+export const login = async (email: string, password: string, sessionToken: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password, sessionToken });
+    return response.data; // { token, dealerId }
+  } catch (error: any) {
+    throw new Error(error.response?.data || "Login failed");
+  }
+};
+
 // ✅ Fetch service centers by pin code
 export const getServiceCentersByPin = async (pinCode: string) => {
   try {

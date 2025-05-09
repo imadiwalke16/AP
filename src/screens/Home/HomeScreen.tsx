@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -15,8 +14,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { list, selectedVehicle, loading } = useSelector((state: any) => state.vehicles);
   const user = useSelector((state: RootState) => state.auth.user) ?? null;
+  const themeConfig = useSelector((state: RootState) => state.auth.themeConfig);
+  const logoUrl = useSelector((state: RootState) => state.auth.logoUrl);
+  const backgroundImageUrl = useSelector((state: RootState) => state.auth.backgroundImageUrl);
   const unreadCount = useSelector((state: RootState) =>
-    state.notifications.notifications.filter(n => !n.isRead).length
+    state.notifications.notifications.filter((n: any) => !n.isRead).length
   );
 
   useEffect(() => {
@@ -30,10 +32,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [selectedVehicle]);
 
   return (
+    
+
+
     <Container>
-      {/* Navbar with dynamic notification count */}
-      <Navbar>
-        <Logo>AutoNation</Logo>
+      <Navbar style={{ backgroundColor: themeConfig?.navbarColor || "#000" }}>
+        {logoUrl ? (
+          <Image source={{ uri: logoUrl }} style={styles.logo} />
+        ) : (
+          <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
+        )}
         <NavButtons>
           <NavButton onPress={() => navigation.navigate("Home")}></NavButton>
           <NotificationButton onPress={() => navigation.navigate("Notifications")}>
@@ -47,10 +55,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <ProfileButton onPress={() => navigation.navigate("Profile")}>👤</ProfileButton>
         </NavButtons>
       </Navbar>
-
-      {/* Main Content */}
       <ContentContainer>
-        {/* Vehicle Selection */}
         <Section>
           <PickerContainer>
             <Picker
@@ -66,8 +71,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </Picker>
           </PickerContainer>
         </Section>
-
-        {/* Vehicle Details */}
         {selectedVehicle && (
           <VehicleDetail>
             <VehicleTitle>{selectedVehicle.year} {selectedVehicle.model}</VehicleTitle>
@@ -95,8 +98,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </VehicleInfoRow>
           </VehicleDetail>
         )}
-
-        {/* Dealer Info Card */}
         <DealerCard>
           <DealerLeft>
             <DealerLogo>AutoNation</DealerLogo>
@@ -111,8 +112,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </DealerRight>
         </DealerCard>
         <View style={{ height: 16 }} />
-
-        {/* Service Advisor Card */}
         <AdvisorCard>
           <AdvisorLeft>
             <Image
@@ -132,10 +131,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             <AdvisorName>James Smith</AdvisorName>
           </AdvisorRight>
         </AdvisorCard>
-
         <View style={{ height: 16 }} />
-
-        {/* Action Buttons */}
         <BottomButtons>
           <ServiceHistoryButton onPress={() => navigation.navigate("ServiceHistory")}>
             <ServiceHistoryText>Service History</ServiceHistoryText>
@@ -145,8 +141,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </BookAppointmentButton>
         </BottomButtons>
       </ContentContainer>
-
-      {/* Footer */}
       <Footer>
         <FooterText>Powered by CDK GLOBAL</FooterText>
       </Footer>
@@ -154,7 +148,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// Styled Components (unchanged)
+// Styled Components
 const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
@@ -163,15 +157,8 @@ const Container = styled.View`
 const Navbar = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding: 12px;
-  background-color: #000;
+  padding: 8px; /* Reduced padding to make navbar more compact */
   align-items: center;
-`;
-
-const Logo = styled.Text`
-  color: #fff;
-  font-size: 20px;
-  font-weight: bold;
 `;
 
 const NavButtons = styled.View`
@@ -443,5 +430,15 @@ const FooterText = styled.Text`
   font-size: 14px;
   font-weight: 600;
 `;
+
+// Inline styles for Image
+const styles = StyleSheet.create({
+  logo: {
+    height: 30, // Reduced height to make navbar more compact
+    width: undefined, // Let width adjust to maintain aspect ratio
+    aspectRatio: 3, // Approximate aspect ratio for Ford logo (adjust as needed)
+    resizeMode: "contain", // Ensure the full logo is shown without cropping
+  },
+});
 
 export default HomeScreen;

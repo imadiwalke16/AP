@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { verifyOTP } from "../../redux/slices/authSlice";
-import { AppDispatch } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 
 const OTPScreen = () => {
   const [otp, setOtp] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+  const { logoUrl } = useSelector((state: RootState) => state.auth);
 
   const handleVerifyOTP = async () => {
     if (otp.length !== 6) {
@@ -24,13 +25,16 @@ const OTPScreen = () => {
       });
   };
 
-
   return (
     <View style={styles.container}>
-      <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
+      {logoUrl ? (
+        <Image source={{ uri: logoUrl }} style={styles.logo} />
+      ) : (
+        <Image source={require("/Users/aditya/AP/asset/image.png")} style={styles.logo} />
+      )}
       <Text style={styles.title}>Service Book</Text>
       <Text style={styles.instruction}>Your OTP has been sent to your registered mobile number</Text>
-      <Text style={styles.mobileNumber}>+91 9623338960</Text>
+      <Text style={styles.mobileNumber}>{}</Text>
       <View style={styles.otpContainer}>
         {[...Array(6)].map((_, index) => (
           <TextInput
@@ -67,10 +71,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 100,
-    height: 100,
+    height: 50, // Reduced height for better fit
+    width: undefined, // Let width adjust to maintain aspect ratio
+    aspectRatio: 3, // Approximate aspect ratio for Ford logo (adjust as needed)
+    resizeMode: "contain", // Ensure the full logo is shown without cropping
     marginBottom: 10,
-  },
+  } as const,
   title: {
     fontSize: 22,
     fontWeight: "bold",
